@@ -1,11 +1,16 @@
+
 //====================================================================================================================
 // SRPG_AdvancedInteraction.js
 //--------------------------------------------------------------------------------------------------------------------
-// free to use and edit     v1.07 add command text color option 
+// 
 //====================================================================================================================
 /*:
- * @plugindesc Add Advanced interaction for SRPG battle.
+ * @target MZ
+ * @plugindesc Add Advanced interaction for SRPG battle. Ported from MV by Boomy
  * @author Shoukang
+  * @url https://github.com/boomyville/
+ * @base SRPG_core_MZ
+ * @orderAfter SRPG_core_MZ
  *
  * @param default no interaction
  * @desc if true, all events except unitevent will have no interaction unless it has <act:xxxx> note tag.
@@ -184,7 +189,10 @@
                 if ($gameSystem.EventToUnit(this.eventId())) {
                     var b = $gameSystem.EventToUnit(this.eventId())[1];
                 }
-                if (!eval(condition)) return false;
+                if (!eval(condition)) {
+                    //console.log("interaction condition not fulfilled")
+                  return false;  
+                } 
             }
         }
 
@@ -277,10 +285,12 @@
     }
     
     Window_ActorCommand.prototype.drawItem = function(index) {
-        var rect = this.itemRectForText(index);
+        var rect = this.itemRect(index);
+        rect.x += this.padding;
+        rect.width -= this.padding * 2;
         var align = this.itemTextAlign();
         if (this.highlightSymbolList().contains(this.commandSymbol(index))){
-            this.changeTextColor(this.textColor(_interactionColorId))
+            this.changeTextColor(ColorManager.textColor(_interactionColorId))
         } else{
             this.resetTextColor();
         }
@@ -483,6 +493,9 @@
                 // considering the moveAfterAction plugin, I copied the commandwait contents here, rather than call it
                 var actor = $gameSystem.EventToUnit($gameTemp.activeEvent().eventId())[1];
                 //actor.onAllActionsEnd();
+                //Boomy edit; causes units that interact to no longer be able to move or attack
+                actor.autoSkillCooldown(true);
+                actor.SRPGActionTimesAdd(-1); //autoSkillCooldown adds an extra action and we dont want that
                 this.srpgAfterAction();
                 $gameSystem.clearSrpgInteractionName();
             }
