@@ -493,9 +493,6 @@
                 // considering the moveAfterAction plugin, I copied the commandwait contents here, rather than call it
                 var actor = $gameSystem.EventToUnit($gameTemp.activeEvent().eventId())[1];
                 //actor.onAllActionsEnd();
-                //Boomy edit; causes units that interact to no longer be able to move or attack
-                actor.autoSkillCooldown(true);
-                actor.SRPGActionTimesAdd(-1); //autoSkillCooldown adds an extra action and we dont want that
                 this.srpgAfterAction();
                 $gameSystem.clearSrpgInteractionName();
             }
