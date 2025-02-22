@@ -261,8 +261,6 @@
         var cw = this._format.cw;
         var a = this._battler; //battler
 
-        print("FW:", fw)
-
         //TODO: basic information that shows on all pages, the code here is just an example
         this.drawActorName(a, tp, lh * 0);
         this.drawActorClass(a, hw + tp, lh * 0);
