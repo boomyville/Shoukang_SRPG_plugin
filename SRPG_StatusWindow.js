@@ -434,12 +434,12 @@
             var y2 = y + lh * Math.floor(i / 2);
             var rate = a.elementRate(elementId) * 100;
             var text = String(rate) + '%'
-            this.changeTextColor(this.systemColor());
+            this.changeTextColor(ColorManager.systemColor());
             this.drawText($dataSystem.elements[elementId], x2, y2, lw);
             if (rate > 100){
-                this.changeTextColor(this.tpCostColor())
+                this.changeTextColor(ColorManager.tpCostColor() )
             } else if (rate < 100){
-                this.changeTextColor(this.deathColor())
+                this.changeTextColor(ColorManager.deathColor())
             } else {
                 this.resetTextColor();
                 text = ' -- ';
@@ -470,7 +470,7 @@
         var a = this._battler;
         var skills = a.skills();
         this._actor = a; //used to call Window_SkillList.prototype.drawSkillCost
-        this.changeTextColor(this.systemColor());
+        this.changeTextColor(ColorManager.systemColor());
         this.drawText(_textSkills, x, y, itemLabelWidth);
         this.resetTextColor();
         for (var i = 0; i < skills.length; i++) {
@@ -497,7 +497,7 @@
         var gold = String(a.gold() || 0);
         var items = a.enemy().dropItems.reduce(function(r, di) { return r.concat(a.itemObject(di.kind, di.dataId))}, []);
 
-        this.changeTextColor(this.systemColor());
+        this.changeTextColor(ColorManager.systemColor());
         this.drawText(_textRewards, x, y, itemLabelWidth);
         this.resetTextColor();
         for (var i = 0; i < items.length; i++) {
@@ -505,7 +505,7 @@
         }
         this.drawText(exp, x, y + lh, 2 * hw - sp - tp - unitWidth, 'right');
         this.drawText(gold, x, y + 2 * lh, 2 * hw - sp - tp - unitWidth, 'right');
-        this.changeTextColor(this.systemColor());
+        this.changeTextColor(ColorManager.systemColor());
         this.drawText(TextManager.expA, x, y + lh, 2 * hw - sp, 'right');
         this.drawText(TextManager.currencyUnit, x, y + 2 * lh, 2 * hw - sp, 'right');
         this.resetTextColor();
