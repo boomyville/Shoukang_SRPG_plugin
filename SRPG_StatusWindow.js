@@ -4,8 +4,9 @@
 // free to use and edit    v1.01 Remove all magic numbers! Better compatibility and easier to change the format! Most farwing functions are overwritten here.
 //====================================================================================================================
 /*:
+ * @target MZ
  * @plugindesc This plugin allows you to show multiple status pages in SRPG battle and open status window from actor command window
- * @author Shoukang
+ * @author Shoukang / Updated to MZ by boomy
  *
  * @param enable actor status command
  * @type boolean
@@ -218,10 +219,11 @@
     Window_SrpgStatus.prototype.loadFormat = function() {
         var fmt = {}
         fmt.lh = this.lineHeight();                                     //line height
-        fmt.tp = this.textPadding();                                    //text padding
-        fmt.sp = this.standardPadding();                                //standard padding
+        fmt.tp = this.itemPadding();                                    //text padding
+        fmt.sp = this.padding;                                //standard padding
         fmt.hw = Math.floor((this.windowWidth() + fmt.tp)/2) - fmt.sp;  //half width, aka start position of column 2
-        fmt.fw = Window_Base._faceWidth;                                //face width
+        //fmt.fw = Window_Base._faceWidth;                                //face width
+        fmt.fw = ImageManager.faceWidth;                                //face width (MZ version)
         fmt.lw = Math.floor((fmt.hw - 3 * fmt.tp) *2/3);                //label width (for example: ATK, DEF, etc)
         fmt.cw = fmt.hw - fmt.lw - 3 * fmt.tp;                          //content width (for example: a.atk, a.def, etc)
         fmt.gaugeWidth = 186;                                           //hp, mp, tp gauge width
@@ -258,6 +260,8 @@
         var lw = this._format.lw;
         var cw = this._format.cw;
         var a = this._battler; //battler
+
+        print("FW:", fw)
 
         //TODO: basic information that shows on all pages, the code here is just an example
         this.drawActorName(a, tp, lh * 0);
@@ -316,6 +320,7 @@
 //========================================================================================================
 //Important: Built-in methods (Replaced those in SRPG-Core)
 //========================================================================================================
+        /*
     Window_SrpgStatus.prototype.drawBasicInfoActor = function(x, y) {
         var tp = this._format.tp;
         var lh = this._format.lh;
@@ -323,16 +328,30 @@
         var halfGaugeWidth = this._format.halfGaugeWidth;
         var a = this._battler;
 
-        this.drawSrpgExpRate(a, x, y + lh * 0);
+        // Draw Actor Level
         this.drawActorLevel(a, x, y + lh * 0);
+
+        // Draw Actor Icons
         this.drawActorIcons(a, x, y + lh * 1);
-        this.drawActorHp(a, x, y + lh * 2, gaugeWidth);
+
+        // Draw HP Gauge + HP Text
+        this.drawGauge(x, y + lh * 2, gaugeWidth, a.hpRate(), ColorManager.hpGaugeColor1(), ColorManager.hpGaugeColor2());
+        this.drawText(`${a.hp}/${a.mhp}`, x, y + lh * 2 - 20, gaugeWidth, 'center'); // HP Text
+
         if ($dataSystem.optDisplayTp) {
-            this.drawActorMp(a, x, y + lh * 3, halfGaugeWidth);
-            this.drawActorTp(a, x + halfGaugeWidth + tp, y + lh * 3, halfGaugeWidth);
+            // Draw MP Gauge + MP Text
+            this.drawGauge(x, y + lh * 3, halfGaugeWidth, a.mpRate(), ColorManager.mpGaugeColor1(), ColorManager.mpGaugeColor2());
+            this.drawText(`${a.mp}/${a.mmp}`, x, y + lh * 3 - 20, halfGaugeWidth, 'center'); // MP Text
+
+            // Draw TP Gauge + TP Text
+            this.drawGauge(x + halfGaugeWidth + tp, y + lh * 3, gaugeWidth, a.tpRate(), ColorManager.tpGaugeColor1(), ColorManager.tpGaugeColor2());
+            this.drawText(`${a.tp}/100`, x + halfGaugeWidth + tp, y + lh * 3 - 20, gaugeWidth, 'center'); // TP Text
         } else {
-            this.drawActorMp(a, x, y + lh * 3, gaugeWidth);
+            // Draw MP Gauge + MP Text (If TP is disabled)
+            this.drawGauge(x, y + lh * 3, gaugeWidth, a.mpRate(), ColorManager.mpGaugeColor1(), ColorManager.mpGaugeColor2());
+            this.drawText(`${a.mp}/${a.mmp}`, x, y + lh * 3 - 20, gaugeWidth, 'center'); // MP Text
         }
+
     };
 
     Window_SrpgStatus.prototype.drawBasicInfoEnemy = function(x, y) {
@@ -344,12 +363,17 @@
 
         this.drawEnemyLevel(a, x, y + lh * 0);
         this.drawActorIcons(a, x, y + lh * 1);
-        this.drawActorHp(a, x, y + lh * 2, gaugeWidth);
+        // this.drawActorHp(a, x, y + lh * 2, gaugeWidth); Replace this with a generic method
+        this.drawGauge(x, y + lh * 2, gaugeWidth, a.hpRate(), ColorManager.hpGaugeColor1(), ColorManager.hpGaugeColor2());
         if ($dataSystem.optDisplayTp) {
-            this.drawActorMp(a, x, y + lh * 3, halfGaugeWidth);
-            this.drawActorTp(a, x + halfGaugeWidth + tp, y + lh * 3, halfGaugeWidth);
+            //this.drawActorMp(a, x, y + lh * 3, halfGaugeWidth);
+            //this.drawActorTp(a, x + halfGaugeWidth + tp, y + lh * 3, halfGaugeWidth);
+            this.drawGauge(x, y + lh * 3, halfGaugeWidth, a.mpRate(), ColorManager.mpGaugeColor1(), ColorManager.mpGaugeColor2());
+            this.drawGauge(x + halfGaugeWidth + tp, y + lh * 3, gaugeWidth, a.tpRate(), ColorManager.tpGaugeColor1(), ColorManager.tpGaugeColor2());
+       
         } else {
-            this.drawActorMp(a, x, y + lh * 3, gaugeWidth);
+            this.drawGauge(x, y + lh * 3, gaugeWidth, a.mpRate(), ColorManager.mpGaugeColor1(), ColorManager.mpGaugeColor2());
+           
         }
     };
 
@@ -394,7 +418,7 @@
         text += a.srpgWeaponRange();
         this.drawText(text, x + hw + lw, y, cw, 'right');
     };
-
+*/
 //========================================================================================================
 //Important: Built-in methods (New functions made by myself)
 //========================================================================================================
