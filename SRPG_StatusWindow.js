@@ -323,7 +323,6 @@
         var gaugeWidth = this._format.gaugeWidth;
         var halfGaugeWidth = this._format.halfGaugeWidth;
         var a = this._battler;
-
         //this.drawSrpgExpRate(a, x, y + lh * 0);
         this.drawActorLevel(a, x, y + lh * 0);
         this.drawActorIcons(a, x, y + lh * 1);
@@ -338,6 +337,10 @@
         }
         */
         this.placeBasicGaugesSrpg(a, x, y + lh * 2);
+        
+        this.clearGauges(); // Run the cleanup function
+        
+        
     };
 
     Window_SrpgStatus.prototype.drawBasicInfoEnemy = function(x, y) {
@@ -359,9 +362,58 @@
             this.drawActorMp(a, x, y + lh * 3, gaugeWidth);
         }*/
         this.placeBasicGaugesSrpg(a, x, y + lh * 2);
+        
+        this.clearGauges(); // Run the cleanup function
+        
     };
 
+    // Hacky fix for overlapping gauges
+    // So for some reason, if the player selects a unit's staus window, then selects another unit's status window,
+    // the gauges from the first unit will still be drawn on the second unit's status window.
+    // This function will remove all gauges that do not belong to the current battler
+    // I'm not sure what's causing this issue, but this is a workaround for now
+    // I don't think its due to srpg's implementation of gauges
+    // And I can't find any rogue calls for the gauge drawing function
 
+    Window_SrpgStatus.prototype.forceClearWindow = function() {
+        //console.log("Forcing window refresh...");
+    
+        this.contents.clear();  // Clear drawn text
+        this.clearGauges();  // Remove all gauges
+        this.removeChildren();  // Ensure other elements are removed (if needed)
+    };
+
+    Window_SrpgStatus.prototype.clearGauges = function() {
+        if (!this._additionalSprites) return;
+    
+        //console.log("Clearing gauges...");
+    
+        let currentBattler = this._battler; // Get the battler linked to the window
+    
+        for (let key in this._additionalSprites) {
+            let gauge = this._additionalSprites[key];
+    
+            // If gauge does NOT belong to the current battler, remove it
+            if (gauge._battler !== currentBattler) {
+                //console.log(`Deleting gauge: ${key}`);
+    
+                // Remove from parent container
+                if (gauge.parent) {
+                    gauge.parent.removeChild(gauge);
+                }
+    
+                // Destroy the PIXI object
+                gauge.destroy({ children: true });
+    
+                // Delete reference
+                delete this._additionalSprites[key];
+            } else {
+                console.log(`Keeping gauge: ${key}`); // Debug log
+            }
+        }
+    };
+    
+    
     Window_SrpgStatus.prototype.drawParameters = function(x, y) {
         var tp = this._format.tp;
         var lh = this._format.lh;
