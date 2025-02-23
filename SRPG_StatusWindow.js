@@ -6,7 +6,7 @@
 /*:
  * @target MZ
  * @plugindesc This plugin allows you to show multiple status pages in SRPG battle and open status window from actor command window
- * @author Shoukang / Updated to MZ by boomy
+ * @author Shoukang / Boomy
  *
  * @param enable actor status command
  * @type boolean
@@ -219,11 +219,10 @@
     Window_SrpgStatus.prototype.loadFormat = function() {
         var fmt = {}
         fmt.lh = this.lineHeight();                                     //line height
-        fmt.tp = this.itemPadding();                                    //text padding
-        fmt.sp = this.padding;                                //standard padding
+        fmt.tp = this.itemPadding();                                      //text padding
+        fmt.sp = this.padding;                                          //standard padding
         fmt.hw = Math.floor((this.windowWidth() + fmt.tp)/2) - fmt.sp;  //half width, aka start position of column 2
-        //fmt.fw = Window_Base._faceWidth;                                //face width
-        fmt.fw = ImageManager.faceWidth;                                //face width (MZ version)
+        fmt.fw = ImageManager.faceWidth;                               //face width
         fmt.lw = Math.floor((fmt.hw - 3 * fmt.tp) *2/3);                //label width (for example: ATK, DEF, etc)
         fmt.cw = fmt.hw - fmt.lw - 3 * fmt.tp;                          //content width (for example: a.atk, a.def, etc)
         fmt.gaugeWidth = 186;                                           //hp, mp, tp gauge width
@@ -318,7 +317,6 @@
 //========================================================================================================
 //Important: Built-in methods (Replaced those in SRPG-Core)
 //========================================================================================================
-        /*
     Window_SrpgStatus.prototype.drawBasicInfoActor = function(x, y) {
         var tp = this._format.tp;
         var lh = this._format.lh;
@@ -326,30 +324,20 @@
         var halfGaugeWidth = this._format.halfGaugeWidth;
         var a = this._battler;
 
-        // Draw Actor Level
+        //this.drawSrpgExpRate(a, x, y + lh * 0);
         this.drawActorLevel(a, x, y + lh * 0);
-
-        // Draw Actor Icons
         this.drawActorIcons(a, x, y + lh * 1);
-
-        // Draw HP Gauge + HP Text
-        this.drawGauge(x, y + lh * 2, gaugeWidth, a.hpRate(), ColorManager.hpGaugeColor1(), ColorManager.hpGaugeColor2());
-        this.drawText(`${a.hp}/${a.mhp}`, x, y + lh * 2 - 20, gaugeWidth, 'center'); // HP Text
-
+        
+        /* Replace RMMV outdated methods
+        this.drawActorHp(a, x, y + lh * 2, gaugeWidth);
         if ($dataSystem.optDisplayTp) {
-            // Draw MP Gauge + MP Text
-            this.drawGauge(x, y + lh * 3, halfGaugeWidth, a.mpRate(), ColorManager.mpGaugeColor1(), ColorManager.mpGaugeColor2());
-            this.drawText(`${a.mp}/${a.mmp}`, x, y + lh * 3 - 20, halfGaugeWidth, 'center'); // MP Text
-
-            // Draw TP Gauge + TP Text
-            this.drawGauge(x + halfGaugeWidth + tp, y + lh * 3, gaugeWidth, a.tpRate(), ColorManager.tpGaugeColor1(), ColorManager.tpGaugeColor2());
-            this.drawText(`${a.tp}/100`, x + halfGaugeWidth + tp, y + lh * 3 - 20, gaugeWidth, 'center'); // TP Text
+            this.drawActorMp(a, x, y + lh * 3, halfGaugeWidth);
+            this.drawActorTp(a, x + halfGaugeWidth + tp, y + lh * 3, halfGaugeWidth);
         } else {
-            // Draw MP Gauge + MP Text (If TP is disabled)
-            this.drawGauge(x, y + lh * 3, gaugeWidth, a.mpRate(), ColorManager.mpGaugeColor1(), ColorManager.mpGaugeColor2());
-            this.drawText(`${a.mp}/${a.mmp}`, x, y + lh * 3 - 20, gaugeWidth, 'center'); // MP Text
+            this.drawActorMp(a, x, y + lh * 3, gaugeWidth);
         }
-
+        */
+        this.placeBasicGaugesSrpg(a, x, y + lh * 2);
     };
 
     Window_SrpgStatus.prototype.drawBasicInfoEnemy = function(x, y) {
@@ -361,19 +349,18 @@
 
         this.drawEnemyLevel(a, x, y + lh * 0);
         this.drawActorIcons(a, x, y + lh * 1);
-        // this.drawActorHp(a, x, y + lh * 2, gaugeWidth); Replace this with a generic method
-        this.drawGauge(x, y + lh * 2, gaugeWidth, a.hpRate(), ColorManager.hpGaugeColor1(), ColorManager.hpGaugeColor2());
+        /* Replace RMMV outdated methods
+        
+        this.drawActorHp(a, x, y + lh * 2, gaugeWidth);
         if ($dataSystem.optDisplayTp) {
-            //this.drawActorMp(a, x, y + lh * 3, halfGaugeWidth);
-            //this.drawActorTp(a, x + halfGaugeWidth + tp, y + lh * 3, halfGaugeWidth);
-            this.drawGauge(x, y + lh * 3, halfGaugeWidth, a.mpRate(), ColorManager.mpGaugeColor1(), ColorManager.mpGaugeColor2());
-            this.drawGauge(x + halfGaugeWidth + tp, y + lh * 3, gaugeWidth, a.tpRate(), ColorManager.tpGaugeColor1(), ColorManager.tpGaugeColor2());
-       
+            this.drawActorMp(a, x, y + lh * 3, halfGaugeWidth);
+            this.drawActorTp(a, x + halfGaugeWidth + tp, y + lh * 3, halfGaugeWidth);
         } else {
-            this.drawGauge(x, y + lh * 3, gaugeWidth, a.mpRate(), ColorManager.mpGaugeColor1(), ColorManager.mpGaugeColor2());
-           
-        }
+            this.drawActorMp(a, x, y + lh * 3, gaugeWidth);
+        }*/
+        this.placeBasicGaugesSrpg(a, x, y + lh * 2);
     };
+
 
     Window_SrpgStatus.prototype.drawParameters = function(x, y) {
         var tp = this._format.tp;
@@ -416,7 +403,7 @@
         text += a.srpgWeaponRange();
         this.drawText(text, x + hw + lw, y, cw, 'right');
     };
-*/
+
 //========================================================================================================
 //Important: Built-in methods (New functions made by myself)
 //========================================================================================================
@@ -456,7 +443,7 @@
         var a = this._battler;
         var slots = a.equipSlots();
         for (var i = 0; i < equips.length; i++) {
-            this.changeTextColor(this.systemColor());
+            this.changeTextColor(ColorManager.systemColor());
             this.drawText($dataSystem.equipTypes[slots[i]], x, y + lh * i, equipLabelWidth);
             this.drawItemName(equips[i], x + equipLabelWidth, y + lh * i, equipContentWidth);
         }
@@ -470,7 +457,7 @@
         var a = this._battler;
         var skills = a.skills();
         this._actor = a; //used to call Window_SkillList.prototype.drawSkillCost
-        this.changeTextColor(ColorManager.systemColor());
+        this.changeTextColor(this.systemColor());
         this.drawText(_textSkills, x, y, itemLabelWidth);
         this.resetTextColor();
         for (var i = 0; i < skills.length; i++) {
@@ -497,7 +484,7 @@
         var gold = String(a.gold() || 0);
         var items = a.enemy().dropItems.reduce(function(r, di) { return r.concat(a.itemObject(di.kind, di.dataId))}, []);
 
-        this.changeTextColor(ColorManager.systemColor());
+        this.changeTextColor(this.systemColor());
         this.drawText(_textRewards, x, y, itemLabelWidth);
         this.resetTextColor();
         for (var i = 0; i < items.length; i++) {
@@ -505,7 +492,7 @@
         }
         this.drawText(exp, x, y + lh, 2 * hw - sp - tp - unitWidth, 'right');
         this.drawText(gold, x, y + 2 * lh, 2 * hw - sp - tp - unitWidth, 'right');
-        this.changeTextColor(ColorManager.systemColor());
+        this.changeTextColor(this.systemColor());
         this.drawText(TextManager.expA, x, y + lh, 2 * hw - sp, 'right');
         this.drawText(TextManager.currencyUnit, x, y + 2 * lh, 2 * hw - sp, 'right');
         this.resetTextColor();
