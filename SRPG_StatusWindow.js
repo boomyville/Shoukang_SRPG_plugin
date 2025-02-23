@@ -61,7 +61,7 @@
     var _textSkills = params['textSrpgSkills'] || 'Skills';
     var _textRewards = params['textSRPGRewards'] || 'Rewards';
     //parameters from core.
-    var parameters = PluginManager.parameters('SRPG_core');
+    var parameters = PluginManager.parameters('SRPG_core_MZ'); // Change to MZ version
     var _enemyDefaultClass = parameters['enemyDefaultClass'] || 'エネミー';
     var _textSrpgEquip = parameters['textSrpgEquip'] || '装備';
     var _textSrpgMove = parameters['textSrpgMove'] || '移動力';
@@ -227,7 +227,7 @@
         fmt.cw = fmt.hw - fmt.lw - 3 * fmt.tp;                          //content width (for example: a.atk, a.def, etc)
         fmt.gaugeWidth = 186;                                           //hp, mp, tp gauge width
         fmt.halfGaugeWidth = Math.floor((fmt.gaugeWidth - fmt.tp)/2);   //hp, mp, tp gauge width, when put 2 in 1 row
-        fmt.equipLabelWidth = fmt.lw + fmt.cw - Window_Base._iconWidth;
+        fmt.equipLabelWidth = fmt.lw + fmt.cw - ImageManager.iconWidth;
         fmt.equipContentWidth = this.windowWidth() - fmt.equipLabelWidth - 2 * fmt.tp - 2 * fmt.sp;
         fmt.itemLabelWidth = fmt.equipLabelWidth;
         fmt.itemValueWidth = fmt.cw;                                    //tp cost, mp cost, etc.
@@ -492,6 +492,7 @@
         var lh = this._format.lh;
         var equipLabelWidth = this._format.equipLabelWidth;
         var equipContentWidth = this._format.equipContentWidth;
+        console.log(equipLabelWidth, equipContentWidth, this._format.lh);
         var a = this._battler;
         var slots = a.equipSlots();
         for (var i = 0; i < equips.length; i++) {
